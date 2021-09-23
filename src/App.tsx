@@ -129,7 +129,6 @@ function App() {
 
     /* if other filter Keys used, use default Arr.filter method */
     if (findOtherKeys) {
-      console.log('filter by other keys start');
       const { field, title, name } = otherKeys;
       all = all.filter((item) => {
         const newField = (field || '').trim();
@@ -148,7 +147,6 @@ function App() {
 
         return true;
       });
-      console.log('filter by other keys end', all);
     }
 
     /* if any data left after filter and sortKey exsists, sort them */
@@ -169,12 +167,14 @@ function App() {
     return all;
   }, [keys, allData, bst, sortKey, sortType]);
 
+  /* get and set allData */
   useEffect(() => {
     getData().then((res) => {
       setAllData(res);
     });
   }, []);
 
+  /* get initial filter and sort */
   useEffect(() => {
     setName(searchParams.current.get(SearchParamKeys.Name) || '');
     setTitle(searchParams.current.get(SearchParamKeys.Title) || '');
@@ -188,9 +188,6 @@ function App() {
         break;
       case DataKeys.Field:
         setSortKey('field');
-        break;
-      case DataKeys.Id:
-        setSortKey('id');
         break;
       case DataKeys.Name:
         setSortKey('name');
@@ -261,11 +258,6 @@ function App() {
     } else {
       searchParams.current.delete(SearchParamKeys.SortType);
     }
-    console.log(
-      'search',
-      searchParams.current.toString(),
-      searchParams.current.get('date')
-    );
     window.history.pushState({}, '', `/?${searchParams.current.toString()}`);
   }, [keys, sortKey, sortType]);
 
@@ -381,7 +373,6 @@ function App() {
               <div className="info">هیچ رکوردی یافت نشد</div>
             )}
             {(items || []).slice(0, maxRecord).map((record) => {
-              console.log('map');
               return (
                 <tr
                   className={`featured ${
