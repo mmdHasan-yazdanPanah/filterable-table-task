@@ -1,0 +1,132 @@
+@import './preflight';
+@import './breakpoints';
+@import './variables';
+
+body {
+  direction: rtl;
+  background: $color_bg;
+  padding: 1rem 0.5rem;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+
+  @include respond-to('small') {
+    flex-direction: row;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    margin: 0.5rem 0.25rem;
+    max-width: 12.5rem;
+
+    @include respond-to('small') {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    label {
+      margin-bottom: 0.375rem;
+    }
+
+    input {
+      padding: 0.5rem;
+      border: 2px solid $color_black;
+    }
+  }
+}
+
+.table {
+  width: 100%;
+
+  @include respond-to('large') {
+    max-width: 1200px;
+  }
+
+  thead {
+    tr {
+      background: $color_brand;
+    }
+
+    th {
+      border: 1px solid $color_black;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+
+      &:hover {
+        background: rgba($color_grey, 0.8);
+      }
+    }
+  }
+
+  td,
+  th {
+    padding: 0.5rem;
+    border: 1px solid $color_grey_mid;
+    min-width: 6rem;
+  }
+
+  tbody {
+    tr {
+      &:nth-child(even) {
+        background: $color_grey;
+      }
+
+      &:nth-child(odd) {
+        background: $color_white;
+      }
+
+      &.featured {
+        transition: all ease 0.2s;
+        cursor: pointer;
+        user-select: none;
+
+        &--inactive {
+          &:hover {
+            background: rgba($color_brand, 0.4);
+          }
+        }
+
+        &--active {
+          background: rgba($color_brand, 1);
+        }
+      }
+    }
+
+    .info {
+      margin-top: 0.5rem;
+      margin-right: 1rem;
+      padding: 0.5rem 1rem;
+      font-size: 1.1em;
+      color: $color_grey;
+      background: rgba($color_black, 0.7);
+      white-space: nowrap;
+      width: 100%;
+    }
+  }
+
+  .sortable-key {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      fill: currentColor;
+      width: 0.6rem;
+      height: auto;
+      margin-right: 0.5rem;
+    }
+
+    .sort-icon {
+      transition: all ease 0.2s;
+
+      &--reverse {
+        transform: rotate(180deg);
+      }
+    }
+  }
+}
