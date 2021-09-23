@@ -227,6 +227,7 @@ function App() {
     }
   }, []);
 
+  /* change page queryStrings by filter and sortChange */
   useEffect(() => {
     if (keys.name) {
       searchParams.current.set(SearchParamKeys.Name, keys.name);
@@ -261,6 +262,7 @@ function App() {
     window.history.pushState({}, '', `/?${searchParams.current.toString()}`);
   }, [keys, sortKey, sortType]);
 
+  /* change filter keys by typing delay */
   useEffect(() => {
     const timeout = setTimeout(() => {
       setKeys({ name, title, field, date });
@@ -346,24 +348,17 @@ function App() {
           },
         ]}
       />
+
       <div style={{ overflowX: 'auto' }}>
         <table className="table">
           <thead>
             <tr>
               {tableHeadItems.map(({ key, label }) => (
                 <th key={key} onClick={() => sortKeyHanlder(key)}>
-                  <div className="sortable-key">
-                    {label}
-                    {sortKey === key && (
-                      <ChevronDown
-                        className={`sort-icon ${
-                          sortType === SortType.Ascending
-                            ? 'sort-icon--reverse'
-                            : ''
-                        } `}
-                      />
-                    )}
-                  </div>
+                  <SortableTh
+                    active={sortKey === key}
+                    {...{ sortType, label }}
+                  />
                 </th>
               ))}
             </tr>
@@ -374,14 +369,10 @@ function App() {
             )}
             {(items || []).slice(0, maxRecord).map((record) => {
               return (
-                <tr
-                  className={`featured ${
-                    feturedRecords.includes(record.id)
-                      ? 'featured--active'
-                      : 'featured--inactive'
-                  }`}
+                <FeaturedTr
                   key={record.id}
-                  onClick={() => feturedRecordHandler(record.id)}>
+                  onClick={() => feturedRecordHandler(record.id)}
+                  active={feturedRecords.includes(record.id)}>
                   {[
                     record.name,
                     record.date,
@@ -392,7 +383,7 @@ function App() {
                   ].map((text) => (
                     <td dir="auto">{text}</td>
                   ))}
-                </tr>
+                </FeaturedTr>
               );
             })}
           </tbody>
@@ -421,6 +412,44 @@ const Fields = ({
         </div>
       ))}
     </div>
+  );
+};
+
+const SortableTh = ({
+  label,
+  active,
+  sortType,
+}: {
+  label: string;
+  active: boolean;
+  sortType?: SortType;
+}) => {
+  return (
+    <div className="sortable-key">
+      {label}
+      {active && sortType !== undefined && (
+        <ChevronDown
+          className={`sort-icon ${
+            sortType === SortType.Ascending ? 'sort-icon--reverse' : ''
+          } `}
+        />
+      )}
+    </div>
+  );
+};
+
+const FeaturedTr: React.FC<{ active: boolean } & ComponentProps<'tr'>> = ({
+  active,
+  className = '',
+  ...rest
+}) => {
+  return (
+    <tr
+      className={`featured ${className} ${
+        active ? 'featured--active' : 'featured--inactive'
+      }`}
+      {...rest}
+    />
   );
 };
 
