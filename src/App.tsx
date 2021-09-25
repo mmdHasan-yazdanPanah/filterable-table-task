@@ -1,10 +1,4 @@
-import React, {
-  ComponentProps,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { ComponentProps, useEffect, useMemo, useRef, useState } from 'react';
 
 import { BianarySearchTree } from './libs/BST';
 import { ReactComponent as ChevronDown } from './assets/icons/chevron-down-solid.svg';
@@ -78,10 +72,7 @@ function App() {
   const [sortKey, setSortKey] = useState<keyof Data>();
   const [sortType, setSortType] = useState<SortType>();
   const [maxRecord, setMaxRecord] = useLocalStorage('max-records', 40);
-  const [feturedRecords, setFeaturedRecords] = useLocalStorage<number[]>(
-    'fetured-records',
-    []
-  );
+  const [feturedRecords, setFeaturedRecords] = useLocalStorage<number[]>('fetured-records', []);
 
   /* make Binary Search Tree if allData exists */
   const bst = useMemo(() => {
@@ -110,9 +101,7 @@ function App() {
     const { date, ...otherKeys } = keys;
 
     /* test otherKeys need to be used for filter or not */
-    const findOtherKeys = Object.values(otherKeys).find(
-      (item) => item !== null && item.trim().length > 0
-    );
+    const findOtherKeys = Object.values(otherKeys).find((item) => item !== null && item.trim().length > 0);
 
     let all = allData;
 
@@ -288,18 +277,16 @@ function App() {
   };
 
   const feturedRecordHandler = (id: Data['id']) => {
-    if (!feturedRecords.includes(id))
-      return setFeaturedRecords((value) => [...value, id]);
+    if (!feturedRecords.includes(id)) return setFeaturedRecords((value) => [...value, id]);
     setFeaturedRecords((value) => value.filter((item) => item !== id));
   };
 
-  const maxRecordChangeHandler: React.InputHTMLAttributes<HTMLInputElement>['onChange'] =
-    (e) => {
-      const n = +e.target.value;
-      if (n > 0) {
-        setMaxRecord(n);
-      }
-    };
+  const maxRecordChangeHandler: React.InputHTMLAttributes<HTMLInputElement>['onChange'] = (e) => {
+    const n = +e.target.value;
+    if (n > 0) {
+      setMaxRecord(n);
+    }
+  };
 
   return (
     <div>
@@ -355,33 +342,20 @@ function App() {
             <tr>
               {tableHeadItems.map(({ key, label }) => (
                 <th key={key} onClick={() => sortKeyHanlder(key)}>
-                  <SortableTh
-                    active={sortKey === key}
-                    {...{ sortType, label }}
-                  />
+                  <SortableTh active={sortKey === key} {...{ sortType, label }} />
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {items && items.length === 0 && (
-              <div className="info">هیچ رکوردی یافت نشد</div>
-            )}
+            {items && items.length === 0 && <div className="info">هیچ رکوردی یافت نشد</div>}
             {(items || []).slice(0, maxRecord).map((record) => {
               return (
-                <FeaturedTr
-                  key={record.id}
-                  onClick={() => feturedRecordHandler(record.id)}
-                  active={feturedRecords.includes(record.id)}>
-                  {[
-                    record.name,
-                    record.date,
-                    record.title,
-                    record.field,
-                    record.old_value,
-                    record.new_value,
-                  ].map((text) => (
-                    <td dir="auto">{text}</td>
+                <FeaturedTr key={record.id} onClick={() => feturedRecordHandler(record.id)} active={feturedRecords.includes(record.id)}>
+                  {[record.name, record.date, record.title, record.field, record.old_value, record.new_value].map((text, index) => (
+                    <td key={index} dir="auto">
+                      {text}
+                    </td>
                   ))}
                 </FeaturedTr>
               );
@@ -406,7 +380,7 @@ const Fields = ({
   return (
     <div className="fields">
       {items.map(({ id, title, ...rest }) => (
-        <div className="field">
+        <div className="field" key={id}>
           <label htmlFor={id}>{title}</label>
           <input dir="auto" id={id} name={id} {...rest} />
         </div>
@@ -415,42 +389,17 @@ const Fields = ({
   );
 };
 
-const SortableTh = ({
-  label,
-  active,
-  sortType,
-}: {
-  label: string;
-  active: boolean;
-  sortType?: SortType;
-}) => {
+const SortableTh = ({ label, active, sortType }: { label: string; active: boolean; sortType?: SortType }) => {
   return (
     <div className="sortable-key">
       {label}
-      {active && sortType !== undefined && (
-        <ChevronDown
-          className={`sort-icon ${
-            sortType === SortType.Ascending ? 'sort-icon--reverse' : ''
-          } `}
-        />
-      )}
+      {active && sortType !== undefined && <ChevronDown className={`sort-icon ${sortType === SortType.Ascending ? 'sort-icon--reverse' : ''} `} />}
     </div>
   );
 };
 
-const FeaturedTr: React.FC<{ active: boolean } & ComponentProps<'tr'>> = ({
-  active,
-  className = '',
-  ...rest
-}) => {
-  return (
-    <tr
-      className={`featured ${className} ${
-        active ? 'featured--active' : 'featured--inactive'
-      }`}
-      {...rest}
-    />
-  );
+const FeaturedTr: React.FC<{ active: boolean } & ComponentProps<'tr'>> = ({ active, className = '', ...rest }) => {
+  return <tr className={`featured ${className} ${active ? 'featured--active' : 'featured--inactive'}`} {...rest} />;
 };
 
 export default App;
